@@ -1,0 +1,15 @@
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/Croissant-Bakery?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: zoominout100!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
