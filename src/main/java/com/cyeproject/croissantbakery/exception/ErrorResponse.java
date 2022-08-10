@@ -29,6 +29,10 @@ public class ErrorResponse {
     public static ErrorResponse of(HttpStatus httpStatus){
         return new ErrorResponse(null, httpStatus.value(), httpStatus.getReasonPhrase());
     }
+
+    public static ErrorResponse of(ExceptionCode exceptionCode){
+        return new ErrorResponse(null, exceptionCode.getStatus(), exceptionCode.getMessage());
+    }
     @Getter
     public static class FieldError {
         private String field;

@@ -1,5 +1,6 @@
 package com.cyeproject.croissantbakery.croissant.dto;
 
+import com.cyeproject.croissantbakery.croissant.entity.Croissant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +12,5 @@ public class CroissantResponseDto {
     private String croissantExplain;
     private Long price;
     private Long calorie;
+    private Croissant.CroissantStatus croissantStatus;
 }

@@ -2,10 +2,12 @@ package com.cyeproject.croissantbakery.croissant.service;
 
 import com.cyeproject.croissantbakery.croissant.entity.Croissant;
 import com.cyeproject.croissantbakery.croissant.repository.CroissantRepository;
+import com.cyeproject.croissantbakery.exception.BusinessLogicException;
+import com.cyeproject.croissantbakery.exception.ExceptionCode;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class CroissantService {
@@ -16,33 +18,28 @@ public class CroissantService {
     }
 
     public Croissant createCroissant(Croissant croissant){
-        //존재하는지 확인하고 없으면 save 후 return
-        //있으면 비즈니스에러 던지기!
+        verifyCroissantName(croissant.getCroissantName());
         return croissantRepository.save(croissant);
     }
 
     public Croissant updateCroissant(Long cNumber,Croissant croissant){
-        //존재하는지 확인
-        //
         croissant.setCroissantNumber(cNumber);
-        Croissant temporary = croissantRepository.findById(cNumber).get();
-        if (croissant.getCroissantName()==null){
-            croissant.setCroissantName(temporary.getCroissantName());
-        }
-        if (croissant.getCroissantExplain()==null){
-            croissant.setCroissantExplain(temporary.getCroissantExplain());
-        }
-        if (croissant.getPrice()==null){//croissant.getPrice()==null)){
-            croissant.setPrice(temporary.getPrice());
-        }
-        if (croissant.getCalorie()==null){
-            croissant.setCalorie(temporary.getCalorie());
-        }
-        return croissantRepository.save(croissant);
+        Croissant temporary = findVerifiedCroissant(cNumber);
+
+        Optional.ofNullable(croissant.getCroissantName())
+                .ifPresent(name -> temporary.setCroissantName(name));
+        Optional.ofNullable(croissant.getCroissantExplain())
+                .ifPresent(explain -> temporary.setCroissantExplain(explain));
+        Optional.ofNullable(croissant.getPrice())
+                .ifPresent(price -> temporary.setPrice(price));
+        Optional.ofNullable(croissant.getCalorie())
+                .ifPresent(calorie -> temporary.setCalorie(calorie));
+
+        return croissantRepository.save(temporary);
     }
 
     public Croissant findCroissant(Long cNumber){
-        return croissantRepository.findById(cNumber).get();
+        return findVerifiedCroissant(cNumber);
     }
 
     public List<Croissant> findAllCroissant(){
@@ -50,6 +47,21 @@ public class CroissantService {
     }
 
     public void outOfStockCroissant(Long cNumber){
-        croissantRepository.deleteById(cNumber);
+        Croissant croissant = findVerifiedCroissant(cNumber);
+        croissant.setCroissantStatus(Croissant.CroissantStatus.CROISSANT_NOT_EXIST);
+        croissantRepository.save(croissant);
+    }
+
+    private Croissant findVerifiedCroissant(Long cNumber){
+        Optional<Croissant> croissant = croissantRepository.findById(cNumber);
+        Croissant findCroissant = croissant.orElseThrow(() ->
+                new BusinessLogicException(ExceptionCode.NOT_FOUND));
+        return findCroissant;
+    }
+
+    private void verifyCroissantName(String name){
+        Optional<Croissant> croissant = croissantRepository.findByCroissantName(name);
+        if(croissant.isPresent())
+                throw new BusinessLogicException(ExceptionCode.ALREADY_EXISTS);
     }
 }

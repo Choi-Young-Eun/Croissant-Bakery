@@ -32,7 +32,7 @@ public class GlobalExceptionAdvice {
     //3. 컨텐츠가 없을때 (그러니까 잘못된 URI가 전달된! 그래서 DB에 데이터가 존재하지 않는 경우겠지요?)
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleHttpRequestNotFoundException(NoHandlerFoundException e){
+    public ErrorResponse handleHttpRequestNotFoundException(BusinessLogicException e){
         final ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.NOT_FOUND);
         return errorResponse;
     }

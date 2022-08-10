@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Setter
 @Getter
@@ -23,4 +20,21 @@ public class Croissant {
     private String croissantExplain;
     private Long price;
     private Long calorie;
+
+    @Enumerated(value=EnumType.STRING)
+    //@Column
+    private CroissantStatus croissantStatus = CroissantStatus.CROISSANT_EXIST;
+
+    public enum CroissantStatus {
+        CROISSANT_EXIST("in_stock"),
+        CROISSANT_NOT_EXIST("out_stock"),
+        CROISSANT_BAKING("be_baking");
+
+        @Getter
+        private String status;
+
+        CroissantStatus(String status) {
+            this.status = status;
+        }
+    }
 }
