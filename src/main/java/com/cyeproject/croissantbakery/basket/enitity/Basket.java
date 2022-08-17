@@ -16,7 +16,7 @@ public class Basket {
     /*
     @Id
     @Column(name="member_id")
-    private Long memberId;
+    private String memberCode;
 
     @ManyToOne
     @MapsId

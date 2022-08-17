@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,15 +18,27 @@ import javax.persistence.Id;
 @Entity
 public class Member {
     @Id
-    private String memberCode;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
+    private Long memberId;
+    @Column(name = "member_pw")
     private String password;
-    private String memberName;
+    private String username;
     private String phone;
     private String email;
+    private String roles; //USER, MANAGER, ADMIN
+
+    //역할이 여러개 있다고 가정할껀가봐
+    public List<String> getRoleList(){
+        if(this.roles.length() > 0){
+            return Arrays.asList(this.roles.split(","));
+        }
+        return new ArrayList<>();
+    }
 
     @Enumerated(value= EnumType.STRING)
     //@Column
-    private MemberStatus memberStatus = MemberStatus.MEMBER_JOIN;
+    private MemberStatus memberStatus;
 
     public enum MemberStatus {
         MEMBER_JOIN("join"),
